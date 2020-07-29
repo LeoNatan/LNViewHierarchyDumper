@@ -6,6 +6,8 @@
 //
 
 #import "LNViewHierarchyDumper.h"
+#include <mach-o/dyld.h>
+@import Darwin;
 
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 @import AppKit;
@@ -22,12 +24,17 @@
 
 @interface NSTask ()
 
-@property (nullable, copy) NSURL *executableURL;
-@property (nullable, copy) NSArray<NSString *> *arguments;
+@property (nullable, copy) NSURL* executableURL;
+@property (nullable, copy) NSArray<NSString*>* arguments;
+@property (nullable, copy) NSDictionary<NSString*, NSString*>* environment;
 @property (nullable, retain) id standardOutput;
+@property (nullable, retain) id standardError;
 
-- (BOOL)launchAndReturnError:(out NSError **_Nullable)error;
-- (void)waitUntilExit;
+@property(readonly) int terminationStatus;
+
+@property(copy, nonnull) void (^terminationHandler)(NSTask* _Nonnull task);
+
+- (BOOL)launch;
 
 @end
 
@@ -84,8 +91,23 @@ __attribute__((objc_direct_members))
 	return self;
 }
 
+#if DEBUG
+//static void func(const struct mach_header* mh, intptr_t vmaddr_slide)
+//{
+//	Dl_info  DlInfo;
+//	dladdr(mh, &DlInfo);
+//	const char* image_name = DlInfo.dli_fname;
+//
+//	NSLog(@"%s", image_name);
+//}
+#endif
+
 - (void)_loadDebugHierarchyFoundationFramework
 {
+#if DEBUG
+//	_dyld_register_func_for_add_image(func);
+#endif
+	
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		//macOS: <XCODE>/Contents/SharedFrameworks/DebugHierarchyFoundation.framework
@@ -95,22 +117,48 @@ __attribute__((objc_direct_members))
 		NSBundle* someSimulatorBundle = [NSBundle bundleForClass:NSObject.class];
 		NSURL* simURL = [[someSimulatorBundle.bundleURL URLByAppendingPathComponent:@"../.."] URLByStandardizingPath];
 		NSURL* bundleURL = [simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DebugHierarchyFoundation.framework"];
+		NSURL* libViewDebuggerSupportURL = [simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib"];
 #else
 		NSTask* whichXcodeTask = [NSTask new];
 		whichXcodeTask.executableURL = [NSURL fileURLWithPath:@"/usr/bin/xcode-select"];
 		whichXcodeTask.arguments = @[@"-p"];
-		NSPipe *pipe = [NSPipe pipe];
-		[whichXcodeTask setStandardOutput:pipe];
-		NSFileHandle *taskHandle;
-		taskHandle = [pipe fileHandleForReading];
-		NSError* taskLaunchError;
-		if(NO == [whichXcodeTask launchAndReturnError:&taskLaunchError])
+		whichXcodeTask.environment = @{};
+		
+		NSPipe* outPipe = [NSPipe pipe];
+		NSMutableData* outData = [NSMutableData new];
+		whichXcodeTask.standardOutput = outPipe;
+		outPipe.fileHandleForReading.readabilityHandler = ^(NSFileHandle * _Nonnull fileHandle) {
+			[outData appendData:fileHandle.availableData];
+		};
+		
+		NSPipe* errPipe = [NSPipe pipe];
+		NSMutableData* errData = [NSMutableData new];
+		whichXcodeTask.standardError = errPipe;
+		errPipe.fileHandleForReading.readabilityHandler = ^(NSFileHandle * _Nonnull fileHandle) {
+			[errData appendData:fileHandle.availableData];
+		};
+		
+		dispatch_semaphore_t waitForTermination = dispatch_semaphore_create(0);
+		
+		whichXcodeTask.terminationHandler = ^(NSTask* _Nonnull task) {
+			outPipe.fileHandleForReading.readabilityHandler = nil;
+			errPipe.fileHandleForReading.readabilityHandler = nil;
+			
+			dispatch_semaphore_signal(waitForTermination);
+		};
+		
+		[whichXcodeTask launch];
+		
+		dispatch_semaphore_wait(waitForTermination, DISPATCH_TIME_FOREVER);
+		
+		if(whichXcodeTask.terminationStatus != 0)
 		{
-			_loadError = taskLaunchError;
+			NSString* errString = [[NSString alloc] initWithData:errData encoding:NSUTF8StringEncoding];
+			_loadError = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: errString}];
 			return;
 		}
-		[whichXcodeTask waitUntilExit];
-		NSString* xcodePath = [[NSString alloc] initWithData:[taskHandle readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+		
+		NSString* xcodePath = [[[NSString alloc] initWithData:outData encoding:NSUTF8StringEncoding] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
 		
 		if(xcodePath.length == 0)
 		{
@@ -120,11 +168,24 @@ __attribute__((objc_direct_members))
 		}
 		
 		NSURL* bundleURL = [[[NSURL fileURLWithPath:xcodePath] URLByAppendingPathComponent:@"../SharedFrameworks/DebugHierarchyFoundation.framework"] URLByStandardizingPath];
+		NSURL* libViewDebuggerSupportURL = [[NSURL fileURLWithPath:xcodePath] URLByAppendingPathComponent:@"Platforms/MacOSX.platform/Developer/Library/Debugger/"
+#if TARGET_OS_MACCATALYST
+											"libViewDebuggerSupport_macCatalyst.dylib"
+#else
+											"libViewDebuggerSupport.dylib"
+#endif
+											];
 #endif
 		NSBundle* bundleToLoad = [NSBundle bundleWithURL:bundleURL];
 		NSError* error;
 		_isFrameworkLoaded = [bundleToLoad loadAndReturnError:&error];
 		_loadError = error;
+		
+		if(NULL == dlopen(libViewDebuggerSupportURL.path.UTF8String, RTLD_NOW))
+		{
+			_isFrameworkLoaded = NO;
+			_loadError = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Unable to load %@: %s", libViewDebuggerSupportURL.lastPathComponent, dlerror()]}];
+		}
 		
 #if DEBUG
 //		static int cnt = 0;
