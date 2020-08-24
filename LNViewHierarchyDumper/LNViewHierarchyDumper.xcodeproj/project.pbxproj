@@ -284,7 +284,6 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos watchos watchsimulator appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2,6";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -308,7 +307,6 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos watchos watchsimulator appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2,6";
-				VALID_ARCHS = "arm64 arm64e armv7 armv7s i386 x86_64";
 			};
 			name = Release;
 		};
