@@ -112,12 +112,26 @@ __attribute__((objc_direct_members))
 	dispatch_once(&onceToken, ^{
 		//macOS: <XCODE>/Contents/SharedFrameworks/DebugHierarchyFoundation.framework
 
-#if TARGET_OS_SIMULATOR || TARGET_OS_MACCATALYST || TARGET_OS_OSX
+#if TARGET_OS_IPHONE || TARGET_OS_MACCATALYST || TARGET_OS_OSX
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
 #if TARGET_OS_SIMULATOR
 		NSBundle* someSimulatorBundle = [NSBundle bundleForClass:NSObject.class];
 		NSURL* simURL = [[someSimulatorBundle.bundleURL URLByAppendingPathComponent:@"../.."] URLByStandardizingPath];
-		NSURL* bundleURL = [simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DebugHierarchyFoundation.framework"];
-		NSURL* libViewDebuggerSupportURL = [simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib"];
+#endif
+		NSURL* bundleURL =
+#if TARGET_OS_SIMULATOR
+		[simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DebugHierarchyFoundation.framework"]
+#else
+		[NSURL fileURLWithPath:@"/Developer/Library/PrivateFrameworks/DebugHierarchyFoundation.framework"]
+#endif
+		;
+		NSURL* libViewDebuggerSupportURL =
+#if TARGET_OS_SIMULATOR
+		[simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib"]
+#else
+		[NSURL fileURLWithPath:@"/Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib"]
+#endif
+		;
 #else
 		NSTask* whichXcodeTask = [NSTask new];
 		whichXcodeTask.executableURL = [NSURL fileURLWithPath:@"/usr/bin/xcode-select"];
@@ -222,7 +236,7 @@ __attribute__((objc_direct_members))
 #define RETURN_IF_FALSE(cmd) if(NO == cmd) { GENERIC_ERROR_IF_NEEDED(); return NO; }
 #define RETURN_IF_NIL(arg) if(arg == nil) { GENERIC_ERROR_IF_NEEDED(); return NO; }
 
-#if TARGET_OS_SIMULATOR || TARGET_OS_MACCATALYST || TARGET_OS_OSX
+#if TARGET_OS_IPHONE || TARGET_OS_MACCATALYST || TARGET_OS_OSX
 static NSArray<NSString*>* LNExtractPhase1ResponseObjects(NSDictionary* phase1Response)
 {
 	NSArray<NSDictionary*>* topLevelGroupsCALayers	= phase1Response[@"topLevelGroups"][@"com.apple.QuartzCore.CALayer"][@"debugHierarchyObjects"];
@@ -233,14 +247,14 @@ static NSArray<NSString*>* LNExtractPhase1ResponseObjects(NSDictionary* phase1Re
 
 - (BOOL)dumpViewHierarchyToURL:(NSURL*)URL error:(NSError**)error
 {
-#if TARGET_OS_SIMULATOR || TARGET_OS_MACCATALYST || TARGET_OS_OSX
+#if TARGET_OS_IPHONE || TARGET_OS_MACCATALYST || TARGET_OS_OSX
 	if(_isFrameworkLoaded == NO)
 	{
 #endif
 		if(error) { *error = _loadError; }
 
 		return NO;
-#if TARGET_OS_SIMULATOR || TARGET_OS_MACCATALYST || TARGET_OS_OSX
+#if TARGET_OS_IPHONE || TARGET_OS_MACCATALYST || TARGET_OS_OSX
 	}
 	
 	if([URL.lastPathComponent hasSuffix:@".viewhierarchy"] == NO)

@@ -46,8 +46,14 @@ class ViewController: UIViewController, UIDocumentPickerDelegate {
 		self.present(picker, animated: true, completion: nil)
 		#else
 		let somePath = NSHomeDirectory()
+		let url: URL
+		#if targetEnvironment(simulator)
 		let userPath = somePath[somePath.startIndex..<somePath.range(of: "/Library")!.lowerBound]
-		try! LNViewHierarchyDumper.shared.dumpViewHierarchy(to: URL(fileURLWithPath: String(userPath)).appendingPathComponent("Desktop"))
+		url = URL(fileURLWithPath: String(userPath)).appendingPathComponent("Desktop")
+		#else
+		url = URL(fileURLWithPath: somePath).appendingPathComponent("Documents")
+		#endif
+		try! LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
 		#endif
 	}
 	
