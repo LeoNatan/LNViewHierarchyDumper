@@ -8,7 +8,7 @@ A framework for programmatically dumping the view hierarchy of your app into an 
 
 <p align="center"><img src="Screenshot.png"/></p>
 
-The framework supports targeting iOS, tvOS and watchOS simulators, hardware devices (**with developer image mounted**), and macOS and Catalyst (with Xcode installed). Under unsupported targets or environments, the frameworks fails silently.
+The framework supports targeting iOS, tvOS and watchOS simulators, hardware devices (**with developer image mounted**), and macOS and Catalyst (**with Xcode installed**). Under unsupported targets or environments, the frameworks fails silently.
 
 **This framework uses Xcode's internal DebugHierarchyFoundation framework, and is not AppStore safe**, thus you should use with care, only linking against it in development/testing scenarios/builds.
 
