@@ -3,36 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39114EE726E2C908004FC75B /* LNViewHierarchyDumper in Frameworks */ = {isa = PBXBuildFile; productRef = 39114EE626E2C908004FC75B /* LNViewHierarchyDumper */; };
+		39114EE826E2C908004FC75B /* LNViewHierarchyDumper in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 39114EE626E2C908004FC75B /* LNViewHierarchyDumper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		39B85D0424AF9C8400EF17BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B85D0324AF9C8400EF17BB /* AppDelegate.swift */; };
 		39B85D0624AF9C8400EF17BB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B85D0524AF9C8400EF17BB /* SceneDelegate.swift */; };
 		39B85D0824AF9C8400EF17BB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B85D0724AF9C8400EF17BB /* ViewController.swift */; };
 		39B85D0B24AF9C8400EF17BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39B85D0924AF9C8400EF17BB /* Main.storyboard */; };
 		39B85D0D24AF9C8500EF17BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39B85D0C24AF9C8500EF17BB /* Assets.xcassets */; };
 		39B85D1024AF9C8500EF17BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39B85D0E24AF9C8500EF17BB /* LaunchScreen.storyboard */; };
-		39B85D1E24AF9C9200EF17BB /* LNViewHierarchyDumper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B85D1C24AF9C8B00EF17BB /* LNViewHierarchyDumper.framework */; };
-		39B85D1F24AF9C9200EF17BB /* LNViewHierarchyDumper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39B85D1C24AF9C8B00EF17BB /* LNViewHierarchyDumper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		39B85D1B24AF9C8B00EF17BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39B85D1724AF9C8B00EF17BB /* LNViewHierarchyDumper.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 39CA7FF524AEA316009883BC;
-			remoteInfo = LNViewHierarchyDumper;
-		};
-		39B85D2124AF9C9C00EF17BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39B85D1724AF9C8B00EF17BB /* LNViewHierarchyDumper.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 39CA7FF424AEA316009883BC;
-			remoteInfo = LNViewHierarchyDumper;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		39B85D2024AF9C9200EF17BB /* Embed Frameworks */ = {
@@ -41,7 +24,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				39B85D1F24AF9C9200EF17BB /* LNViewHierarchyDumper.framework in Embed Frameworks */,
+				39114EE826E2C908004FC75B /* LNViewHierarchyDumper in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -49,6 +32,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		39114EE326E2C8F6004FC75B /* LNViewHierarchyDumper */ = {isa = PBXFileReference; lastKnownFileType = folder; name = LNViewHierarchyDumper; path = ..; sourceTree = "<group>"; };
 		39B85D0024AF9C8400EF17BB /* ViewHierarchyDumpTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViewHierarchyDumpTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39B85D0324AF9C8400EF17BB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		39B85D0524AF9C8400EF17BB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -57,7 +41,6 @@
 		39B85D0C24AF9C8500EF17BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39B85D0F24AF9C8500EF17BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39B85D1124AF9C8500EF17BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		39B85D1724AF9C8B00EF17BB /* LNViewHierarchyDumper.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LNViewHierarchyDumper.xcodeproj; path = ../LNViewHierarchyDumper/LNViewHierarchyDumper.xcodeproj; sourceTree = "<group>"; };
 		39B85D2524AFA74100EF17BB /* ViewHierarchyDumpTester.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ViewHierarchyDumpTester.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39B85D1E24AF9C9200EF17BB /* LNViewHierarchyDumper.framework in Frameworks */,
+				39114EE726E2C908004FC75B /* LNViewHierarchyDumper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,7 +59,7 @@
 		39B85CF724AF9C8400EF17BB = {
 			isa = PBXGroup;
 			children = (
-				39B85D1724AF9C8B00EF17BB /* LNViewHierarchyDumper.xcodeproj */,
+				39114EE326E2C8F6004FC75B /* LNViewHierarchyDumper */,
 				39B85D0224AF9C8400EF17BB /* ViewHierarchyDumpTester */,
 				39B85D0124AF9C8400EF17BB /* Products */,
 				39B85D1D24AF9C9200EF17BB /* Frameworks */,
@@ -106,14 +89,6 @@
 			path = ViewHierarchyDumpTester;
 			sourceTree = "<group>";
 		};
-		39B85D1824AF9C8B00EF17BB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				39B85D1C24AF9C8B00EF17BB /* LNViewHierarchyDumper.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		39B85D1D24AF9C9200EF17BB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -136,9 +111,12 @@
 			buildRules = (
 			);
 			dependencies = (
-				39B85D2224AF9C9C00EF17BB /* PBXTargetDependency */,
+				39114EE526E2C901004FC75B /* PBXTargetDependency */,
 			);
 			name = ViewHierarchyDumpTester;
+			packageProductDependencies = (
+				39114EE626E2C908004FC75B /* LNViewHierarchyDumper */,
+			);
 			productName = ViewHierarchyDumpTester;
 			productReference = 39B85D0024AF9C8400EF17BB /* ViewHierarchyDumpTester.app */;
 			productType = "com.apple.product-type.application";
@@ -168,28 +146,12 @@
 			mainGroup = 39B85CF724AF9C8400EF17BB;
 			productRefGroup = 39B85D0124AF9C8400EF17BB /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 39B85D1824AF9C8B00EF17BB /* Products */;
-					ProjectRef = 39B85D1724AF9C8B00EF17BB /* LNViewHierarchyDumper.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				39B85CFF24AF9C8400EF17BB /* ViewHierarchyDumpTester */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		39B85D1C24AF9C8B00EF17BB /* LNViewHierarchyDumper.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = LNViewHierarchyDumper.framework;
-			remoteRef = 39B85D1B24AF9C8B00EF17BB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		39B85CFE24AF9C8400EF17BB /* Resources */ = {
@@ -218,10 +180,9 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		39B85D2224AF9C9C00EF17BB /* PBXTargetDependency */ = {
+		39114EE526E2C901004FC75B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = LNViewHierarchyDumper;
-			targetProxy = 39B85D2124AF9C9C00EF17BB /* PBXContainerItemProxy */;
+			productRef = 39114EE426E2C901004FC75B /* LNViewHierarchyDumper */;
 		};
 /* End PBXTargetDependency section */
 
@@ -431,6 +392,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		39114EE426E2C901004FC75B /* LNViewHierarchyDumper */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LNViewHierarchyDumper;
+		};
+		39114EE626E2C908004FC75B /* LNViewHierarchyDumper */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LNViewHierarchyDumper;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 39B85CF824AF9C8400EF17BB /* Project object */;
 }

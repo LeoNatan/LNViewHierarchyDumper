@@ -5,7 +5,7 @@
 //  Created by Leo Natan (Wix) on 7/3/20.
 //
 
-#import "LNViewHierarchyDumper.h"
+#import <LNViewHierarchyDumper/LNViewHierarchyDumper.h>
 #include <mach-o/dyld.h>
 @import Darwin;
 
