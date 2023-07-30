@@ -20,8 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Dumps the current view hierarchy to an Xcode 12 and above compatible view hierarchy file archive.
 /// @param URL The file URL at which to create the view hierarchy file archive. The last path component should either have a “.viewhierarchy” extension, or point to a directory and a default name will be chosen by the system.
-/// @param error On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information. You may specify NULL for this parameter if you do not want the error information.
-- (BOOL)dumpViewHierarchyToURL:(NSURL*)URL error:(NSError**)error;
+/// @param error On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information. You may specify @c NULL for this parameter if you do not want the error information.
+/// @return @c YES if the view hierarchy was successfully dumped; otherwise, @c NO.
+- (BOOL)dumpViewHierarchyToURL:(NSURL*)URL error:(out NSError** _Nullable)error;
 
 @end
 

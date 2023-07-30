@@ -1,58 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22138.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7RC-og-qGI">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22113"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="TimesNewRoman.ttf">
-            <string>.SFUI-Regular</string>
-        </array>
-    </customFonts>
     <scenes>
-        <!--View Controller-->
+        <!--View Hierarchy Dumper-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ViewHierarchyDumpTester" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="View Hierarchy Dumper" id="BYZ-38-t0r" customClass="ViewController" customModule="ViewHierarchyDumpTester" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC" customClass="SelfColoringView" customModule="ViewHierarchyDumpTester" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="69I-qG-EmC">
-                                <rect key="frame" x="304" y="44" width="90" height="30"/>
-                                <state key="normal" title="New Window"/>
-                                <connections>
-                                    <action selector="newWindow:" destination="BYZ-38-t0r" eventType="primaryActionTriggered" id="Pet-rW-wfG"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lgT-Ow-a7Q">
-                                <rect key="frame" x="195" y="397.5" width="24" height="111"/>
-                                <fontDescription key="fontDescription" name=".SFUI-Regular" family=".AppleSystemUIFont" pointSize="100"/>
-                                <state key="normal" image="camera.fill" catalog="system"/>
-                                <connections>
-                                    <action selector="dumpHierarchy:" destination="BYZ-38-t0r" eventType="primaryActionTriggered" id="xKT-x4-Dpw"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="69I-qG-EmC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="NqN-f7-qyf"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="69I-qG-EmC" secondAttribute="trailing" constant="20" id="SJg-LB-P7f"/>
-                            <constraint firstItem="lgT-Ow-a7Q" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="adz-kD-IWb"/>
-                            <constraint firstItem="lgT-Ow-a7Q" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="izr-zk-WeE"/>
-                            <constraint firstItem="69I-qG-EmC" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" symbolic="YES" id="qZa-pF-GfG"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
+                    <navigationItem key="navigationItem" title="View Hierarchy Dumper" id="yVp-Qj-5Yh">
+                        <barButtonItem key="leftBarButtonItem" image="tray.and.arrow.down.fill" catalog="system" id="3nK-uR-E8q">
+                            <connections>
+                                <action selector="dumpHierarchy:" destination="BYZ-38-t0r" id="oDm-4F-PrN"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" image="macwindow.badge.plus" catalog="system" id="o5H-eO-RS6">
+                            <connections>
+                                <action selector="newWindow:" destination="BYZ-38-t0r" id="N0L-g2-xGJ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="871.01449275362324" y="107.8125"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="xyf-H1-2Nm">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="7RC-og-qGI" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2gc-qf-Qie">
+                        <rect key="frame" x="0.0" y="48" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="3PH-1r-45H"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aka-dK-Dqb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-39.130434782608695" y="107.8125"/>
         </scene>
     </scenes>
     <resources>
-        <image name="camera.fill" catalog="system" width="128" height="96"/>
+        <image name="macwindow.badge.plus" catalog="system" width="128" height="97"/>
+        <image name="tray.and.arrow.down.fill" catalog="system" width="128" height="117"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

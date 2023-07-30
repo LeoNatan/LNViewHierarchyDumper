@@ -18,7 +18,7 @@
 #endif
 
 
-#if TARGET_OS_MACCATALYST
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
 
 @interface NSTask : NSObject @end
 
@@ -43,14 +43,17 @@
 @interface NSObject ()
 
 //DBGTargetHub
-+ (id) sharedHub;
++ (id)sharedHub;
 - (NSData*)performRequestWithRequestInBase64:(NSString*)arg1;
 
 //DebugHierarchyTargetHub
-- (id) performRequest:(id /*DBGTargetHub*/)arg1 error:(NSError**)error;
+- (id)performRequest:(id /*DBGTargetHub*/)arg1 error:(NSError**)error;
 
 //DebugHierarchyRequest
-+ (id) requestWithBase64Data:(NSString*)arg1 error:(NSError**)arg2;
++ (id)requestWithBase64Data:(NSString*)arg1 error:(NSError**)arg2;
+
+//NSTask
+- (BOOL)launchAndReturnError:(out NSError **_Nullable)error;
 
 @end
 
@@ -97,101 +100,255 @@ __attribute__((objc_direct_members))
 //	Dl_info  DlInfo;
 //	dladdr(mh, &DlInfo);
 //	const char* image_name = DlInfo.dli_fname;
-//
+//	
 //	NSLog(@"%s", image_name);
+//}
+//
+//__attribute__((constructor))
+//static void zzz(void)
+//{
+//	_dyld_register_func_for_add_image(func);
+//	
+//	//We are looking for:
+//	//	DebugHierarchyFoundation.framework
+//	//	libViewDebuggerSupport.dylib
 //}
 #endif
 
-- (void)_loadDebugHierarchyFoundationFramework
++ (BOOL)_isMacSandboxed
 {
-#if DEBUG
-//	_dyld_register_func_for_add_image(func);
-#endif
-	
+	return NSProcessInfo.processInfo.environment[@"APP_SANDBOX_CONTAINER_ID"].length > 0;
+}
+
++ (NSURL*)_xcodeURLOrError:(out NSError* __strong * _Nullable)outError
+{
+	static NSURL* rv = nil;
+	static NSError* error = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		//macOS: <XCODE>/Contents/SharedFrameworks/DebugHierarchyFoundation.framework
+		if(self._isMacSandboxed)
+		{
+			rv = [NSURL fileURLWithPath:@"/Applications/Xcode.app/Contents"];
+			if([rv checkResourceIsReachableAndReturnError:NULL] == NO)
+			{
+				rv = [NSURL fileURLWithPath:@"/Applications/Xcode-beta.app/Contents"];
+				if([rv checkResourceIsReachableAndReturnError:NULL] == NO)
+				{
+					rv = NULL;
+					error = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"App is sandboxed and cannot find Xcode in\n/Applications/Xcode.app\nor\n/Applications/Xcode-beta.app"}];
+					return;
+				}
+			}
+		}
+		else
+		{
+			NSTask* whichXcodeTask = [NSTask new];
+			[whichXcodeTask setValue:[NSURL fileURLWithPath:@"/usr/bin/xcode-select"] forKey:@"executableURL"];
+			whichXcodeTask.arguments = @[@"-p"];
+			whichXcodeTask.environment = @{};
+			
+			NSPipe* outPipe = [NSPipe pipe];
+			NSMutableData* outData = [NSMutableData new];
+			whichXcodeTask.standardOutput = outPipe;
+			outPipe.fileHandleForReading.readabilityHandler = ^(NSFileHandle * _Nonnull fileHandle) {
+				[outData appendData:fileHandle.availableData];
+			};
+			
+			NSPipe* errPipe = [NSPipe pipe];
+			NSMutableData* errData = [NSMutableData new];
+			whichXcodeTask.standardError = errPipe;
+			errPipe.fileHandleForReading.readabilityHandler = ^(NSFileHandle * _Nonnull fileHandle) {
+				[errData appendData:fileHandle.availableData];
+			};
+			
+			dispatch_semaphore_t waitForTermination = dispatch_semaphore_create(0);
+			
+			[whichXcodeTask setValue:^(NSTask* _Nonnull task) {
+				outPipe.fileHandleForReading.readabilityHandler = nil;
+				errPipe.fileHandleForReading.readabilityHandler = nil;
+				
+				dispatch_semaphore_signal(waitForTermination);
+			} forKey:@"terminationHandler"];
+			
+			NSError* taskError;
+			[(id)whichXcodeTask launchAndReturnError:&taskError];
+			
+			if(taskError == nil)
+			{
+				dispatch_semaphore_wait(waitForTermination, DISPATCH_TIME_FOREVER);
+			}
+			else
+			{
+				error = taskError;
+				return;
+			}
+			
+			if(whichXcodeTask.terminationStatus != 0)
+			{
+				NSString* errString = [[NSString alloc] initWithData:errData encoding:NSUTF8StringEncoding];
+				error = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: errString}];
+				return;
+			}
+			
+			NSString* xcodePath = [[[NSString alloc] initWithData:outData encoding:NSUTF8StringEncoding] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+			
+			if(xcodePath.length == 0)
+			{
+				error = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unable to find the current active developer directory"}];
+				
+				return;
+			}
+			
+			rv = [[[NSURL fileURLWithPath:xcodePath] URLByAppendingPathComponent:@".."] URLByStandardizingPath];
+		}
+	});
+	if(outError != NULL)
+	{
+		*outError = error;
+	}
+	return rv;
+}
 
++ (NSURL*)_debugHierarchyFoundationFrameworkURL_iOS:(NSURL*)runtimeURL
+{
+	NSString* rv = nil;
+	if(@available(iOS 17, *))
+	{
+		rv = @"System/Library/PrivateFrameworks/DebugHierarchyFoundation.framework";
+	}
+	else
+	{
+		rv = @"Developer/Library/PrivateFrameworks/DebugHierarchyFoundation.framework";
+	}
+#if TARGET_OS_SIMULATOR
+	return [runtimeURL URLByAppendingPathComponent:rv];
+#else
+	return [NSURL fileURLWithPath:[NSString stringWithFormat:@"/%@", rv]];
+#endif
+}
+
++ (NSURL*)_debugHierarchyFoundationFrameworkURL_macOS:(NSURL*)runtimeURL isCatalyst:(BOOL)isCatalyst
+{
+	return [runtimeURL URLByAppendingPathComponent:@"SharedFrameworks/DebugHierarchyFoundation.framework"];
+}
+
++ (nullable NSURL*)_debugHierarchyFoundationFrameworkURL:(NSURL*)runtimeURL error:(out NSError** _Nullable)error
+{
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+	if (@available(iOS 14.0, *))
+	{
+		if(NSProcessInfo.processInfo.isiOSAppOnMac)
+		{
+			NSError* xcodeError = nil;
+			NSURL* xcodeURL = [self _xcodeURLOrError:&xcodeError];
+			if(xcodeError)
+			{
+				if(error) { *error = xcodeError; }
+				return nil;
+			}
+			
+			return [self _debugHierarchyFoundationFrameworkURL_macOS:xcodeURL isCatalyst:YES];
+		}
+	}
+	return [self _debugHierarchyFoundationFrameworkURL_iOS:runtimeURL];
+#else
+#if TARGET_OS_MACCATALYST
+	BOOL isCatalyst = YES;
+#else
+	BOOL isCatalyst = NO;
+#endif
+	return [self _debugHierarchyFoundationFrameworkURL_macOS:runtimeURL isCatalyst:isCatalyst];
+#endif
+}
+
++ (NSURL*)_libViewDebuggerSupportURL_iOS:(NSURL*)runtimeURL
+{
+	NSString* rv = nil;
+	if(@available(iOS 17, *))
+	{
+		rv = @"usr/lib/libViewDebuggerSupport.dylib";
+	}
+	else
+	{
+		rv = @"Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib";
+	}
+#if TARGET_OS_SIMULATOR
+	return [runtimeURL URLByAppendingPathComponent:rv];
+#else
+	return [NSURL fileURLWithPath:[NSString stringWithFormat:@"/%@", rv]];
+#endif
+}
+
++ (NSURL*)_libViewDebuggerSupportURL_macOS:(NSURL*)runtimeURL isCatalyst:(BOOL)isCatalyst
+{
+	NSString* libName = isCatalyst ? @"libViewDebuggerSupport_macCatalyst.dylib" : @"libViewDebuggerSupport.dylib";
+	return [runtimeURL URLByAppendingPathComponent:[NSString stringWithFormat:@"Developer/Platforms/MacOSX.platform/Developer/Library/Debugger/%@", libName]];
+}
+
++ (nullable NSURL*)_libViewDebuggerSupportURL:(NSURL*)runtimeURL error:(out NSError** _Nullable)error
+{
+#if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
+	if (@available(iOS 14.0, *))
+	{
+		if(NSProcessInfo.processInfo.isiOSAppOnMac)
+		{
+			NSError* xcodeError = nil;
+			NSURL* xcodeURL = [self _xcodeURLOrError:&xcodeError];
+			if(xcodeError)
+			{
+				if(error) { *error = xcodeError; }
+				return nil;
+			}
+			
+			return [self _libViewDebuggerSupportURL_macOS:xcodeURL isCatalyst:YES];
+		}
+	}
+	return [self _libViewDebuggerSupportURL_iOS:runtimeURL];
+#else
+#if TARGET_OS_MACCATALYST
+	BOOL isCatalyst = YES;
+#else
+	BOOL isCatalyst = NO;
+#endif
+	return [self _libViewDebuggerSupportURL_macOS:runtimeURL isCatalyst:isCatalyst];
+#endif
+}
+
+
+- (void)_loadDebugHierarchyFoundationFramework
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
 #if TARGET_OS_IPHONE || TARGET_OS_MACCATALYST || TARGET_OS_OSX
 #if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
 #if TARGET_OS_SIMULATOR
 		NSBundle* someSimulatorBundle = [NSBundle bundleForClass:NSObject.class];
 		NSURL* simURL = [[someSimulatorBundle.bundleURL URLByAppendingPathComponent:@"../.."] URLByStandardizingPath];
-#endif
-		NSURL* bundleURL =
-#if TARGET_OS_SIMULATOR
-		[simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DebugHierarchyFoundation.framework"]
 #else
-		[NSURL fileURLWithPath:@"/Developer/Library/PrivateFrameworks/DebugHierarchyFoundation.framework"]
+		NSURL* simURL = nil;
 #endif
-		;
-		NSURL* libViewDebuggerSupportURL =
-#if TARGET_OS_SIMULATOR
-		[simURL URLByAppendingPathComponent:@"Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib"]
-#else
-		[NSURL fileURLWithPath:@"/Developer/Library/PrivateFrameworks/DTDDISupport.framework/libViewDebuggerSupport.dylib"]
-#endif
-		;
-#else
-		NSTask* whichXcodeTask = [NSTask new];
-		whichXcodeTask.executableURL = [NSURL fileURLWithPath:@"/usr/bin/xcode-select"];
-		whichXcodeTask.arguments = @[@"-p"];
-		whichXcodeTask.environment = @{};
+		NSError* error;
+		NSURL* bundleURL = [LNViewHierarchyDumper _debugHierarchyFoundationFrameworkURL:simURL error:&error];
+		NSURL* libViewDebuggerSupportURL = [LNViewHierarchyDumper _libViewDebuggerSupportURL:simURL error:&error];
 		
-		NSPipe* outPipe = [NSPipe pipe];
-		NSMutableData* outData = [NSMutableData new];
-		whichXcodeTask.standardOutput = outPipe;
-		outPipe.fileHandleForReading.readabilityHandler = ^(NSFileHandle * _Nonnull fileHandle) {
-			[outData appendData:fileHandle.availableData];
-		};
-		
-		NSPipe* errPipe = [NSPipe pipe];
-		NSMutableData* errData = [NSMutableData new];
-		whichXcodeTask.standardError = errPipe;
-		errPipe.fileHandleForReading.readabilityHandler = ^(NSFileHandle * _Nonnull fileHandle) {
-			[errData appendData:fileHandle.availableData];
-		};
-		
-		dispatch_semaphore_t waitForTermination = dispatch_semaphore_create(0);
-		
-		whichXcodeTask.terminationHandler = ^(NSTask* _Nonnull task) {
-			outPipe.fileHandleForReading.readabilityHandler = nil;
-			errPipe.fileHandleForReading.readabilityHandler = nil;
-			
-			dispatch_semaphore_signal(waitForTermination);
-		};
-		
-		[whichXcodeTask launch];
-		
-		dispatch_semaphore_wait(waitForTermination, DISPATCH_TIME_FOREVER);
-		
-		if(whichXcodeTask.terminationStatus != 0)
+		if(error != nil)
 		{
-			NSString* errString = [[NSString alloc] initWithData:errData encoding:NSUTF8StringEncoding];
-			_loadError = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: errString}];
+			_isFrameworkLoaded = NO;
+			_loadError = error;
+			return;
+		}
+#else
+		NSURL* xcodeURL = [LNViewHierarchyDumper _xcodeURLOrError:&_loadError];
+		if(xcodeURL == nil)
+		{
+			_isFrameworkLoaded = NO;
 			return;
 		}
 		
-		NSString* xcodePath = [[[NSString alloc] initWithData:outData encoding:NSUTF8StringEncoding] stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
-		
-		if(xcodePath.length == 0)
-		{
-			_loadError = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unable to find the current active developer directory"}];
-			
-			return;
-		}
-		
-		NSURL* bundleURL = [[[NSURL fileURLWithPath:xcodePath] URLByAppendingPathComponent:@"../SharedFrameworks/DebugHierarchyFoundation.framework"] URLByStandardizingPath];
-		NSURL* libViewDebuggerSupportURL = [[NSURL fileURLWithPath:xcodePath] URLByAppendingPathComponent:@"Platforms/MacOSX.platform/Developer/Library/Debugger/"
-#if TARGET_OS_MACCATALYST
-											"libViewDebuggerSupport_macCatalyst.dylib"
-#else
-											"libViewDebuggerSupport.dylib"
-#endif
-											];
+		NSURL* bundleURL = [LNViewHierarchyDumper _debugHierarchyFoundationFrameworkURL:xcodeURL];
+		NSURL* libViewDebuggerSupportURL = [LNViewHierarchyDumper _libViewDebuggerSupportURL:xcodeURL];
 #endif
 		NSBundle* bundleToLoad = [NSBundle bundleWithURL:bundleURL];
-		NSError* error;
 		_isFrameworkLoaded = [bundleToLoad loadAndReturnError:&error];
 		_loadError = error;
 		
@@ -232,7 +389,7 @@ __attribute__((objc_direct_members))
 	});
 }
 
-#define GENERIC_ERROR_IF_NEEDED() if(error && !*error) { *error = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown error encountered; try restarting your simulator (this framework is as buggy or bug-free as Xcode's visual inspector 🤷‍♂️)"}]; }
+#define GENERIC_ERROR_IF_NEEDED() if(error && !*error) { *error = [NSError errorWithDomain:@"LNViewHierarchyDumperDomain" code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown error encountered; try restarting your simulator (this framework is as buggy as, or as bug-free as, Xcode's visual inspector. 🤷‍♂️)"}]; }
 #define RETURN_IF_FALSE(cmd) if(NO == cmd) { GENERIC_ERROR_IF_NEEDED(); return NO; }
 #define RETURN_IF_NIL(arg) if(arg == nil) { GENERIC_ERROR_IF_NEEDED(); return NO; }
 
@@ -245,7 +402,7 @@ static NSArray<NSString*>* LNExtractPhase1ResponseObjects(NSDictionary* phase1Re
 }
 #endif
 
-- (BOOL)dumpViewHierarchyToURL:(NSURL*)URL error:(NSError**)error
+- (BOOL)dumpViewHierarchyToURL:(NSURL*)URL error:(out NSError** _Nullable)error
 {
 #if TARGET_OS_IPHONE || TARGET_OS_MACCATALYST || TARGET_OS_OSX
 	if(_isFrameworkLoaded == NO)
