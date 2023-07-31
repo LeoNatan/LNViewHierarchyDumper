@@ -323,13 +323,21 @@ __attribute__((objc_direct_members))
 #if TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
 #if TARGET_OS_SIMULATOR
 		NSBundle* someSimulatorBundle = [NSBundle bundleForClass:NSObject.class];
-		NSURL* simURL = [[someSimulatorBundle.bundleURL URLByAppendingPathComponent:@"../.."] URLByStandardizingPath];
+		NSURL* runtimeURL = [[someSimulatorBundle.bundleURL URLByAppendingPathComponent:@"../.."] URLByStandardizingPath];
 #else
-		NSURL* simURL = nil;
+		NSURL* runtimeURL = nil;
+#endif
+#else
+		NSURL* runtimeURL = [LNViewHierarchyDumper _xcodeURLOrError:&_loadError];
+		if(runtimeURL == nil)
+		{
+			_isFrameworkLoaded = NO;
+			return;
+		}
 #endif
 		NSError* error;
-		NSURL* bundleURL = [LNViewHierarchyDumper _debugHierarchyFoundationFrameworkURL:simURL error:&error];
-		NSURL* libViewDebuggerSupportURL = [LNViewHierarchyDumper _libViewDebuggerSupportURL:simURL error:&error];
+		NSURL* bundleURL = [LNViewHierarchyDumper _debugHierarchyFoundationFrameworkURL:runtimeURL error:&error];
+		NSURL* libViewDebuggerSupportURL = [LNViewHierarchyDumper _libViewDebuggerSupportURL:runtimeURL error:&error];
 		
 		if(error != nil)
 		{
@@ -337,17 +345,7 @@ __attribute__((objc_direct_members))
 			_loadError = error;
 			return;
 		}
-#else
-		NSURL* xcodeURL = [LNViewHierarchyDumper _xcodeURLOrError:&_loadError];
-		if(xcodeURL == nil)
-		{
-			_isFrameworkLoaded = NO;
-			return;
-		}
 		
-		NSURL* bundleURL = [LNViewHierarchyDumper _debugHierarchyFoundationFrameworkURL:xcodeURL];
-		NSURL* libViewDebuggerSupportURL = [LNViewHierarchyDumper _libViewDebuggerSupportURL:xcodeURL];
-#endif
 		NSBundle* bundleToLoad = [NSBundle bundleWithURL:bundleURL];
 		_isFrameworkLoaded = [bundleToLoad loadAndReturnError:&error];
 		_loadError = error;
