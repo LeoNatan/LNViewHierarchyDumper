@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 
 import PackageDescription
 
@@ -6,6 +6,7 @@ let package = Package(
 	name: "LNViewHierarchyDumper",
 	platforms: [
 		.iOS(.v13),
+		.macCatalyst(.v13),
 		.macOS(.v11)
 	],
 	products: [
