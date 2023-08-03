@@ -108,16 +108,16 @@ __attribute__((objc_direct_members))
 - (nullable NSDictionary*)_executeRequestPhaseWithRequest:(NSDictionary*)request hub:(id /*DebugHierarchyTargetHub*/)sharedHub outputURL:(NSURL*)outputURL phaseCount:(NSInteger)count error:(NSError**)error
 {
 	NSData* phaseJsonData = [NSJSONSerialization dataWithJSONObject:request options:0 error:error];
-	RETURN_IF_NIL(phaseJsonData);
+	RETURN_NIL_IF_NIL(phaseJsonData);
 	
 	id phaseRequest = [NSClassFromString(@"DebugHierarchyRequest") requestWithBase64Data:[phaseJsonData base64EncodedStringWithOptions:0] error:error];
-	RETURN_IF_NIL(phaseRequest);
+	RETURN_NIL_IF_NIL(phaseRequest);
 	NSData* phaseResponseData = [sharedHub performRequest:phaseRequest error:error];
-	RETURN_IF_NIL(phaseResponseData);
+	RETURN_NIL_IF_NIL(phaseResponseData);
 	if(count >= 0)
 	{
 		BOOL didWrite = [phaseResponseData writeToURL:[outputURL URLByAppendingPathComponent:[NSString stringWithFormat:@"Response_%@", @(count)]] options:NSDataWritingAtomic error:error];
-		RETURN_IF_FALSE(didWrite);
+		RETURN_NIL_IF_FALSE(didWrite);
 	}
 	
 	phaseResponseData = phaseResponseData.isGzippedData ? phaseResponseData.gunzippedData : phaseResponseData;
@@ -144,15 +144,15 @@ __attribute__((objc_direct_members))
 	
 	if([NSFileManager.defaultManager fileExistsAtPath:URL.path])
 	{
-		RETURN_IF_FALSE([NSFileManager.defaultManager removeItemAtURL:URL error:error]);
+		RETURN_NO_IF_FALSE([NSFileManager.defaultManager removeItemAtURL:URL error:error]);
 	}
 	
-	RETURN_IF_FALSE([NSFileManager.defaultManager createDirectoryAtURL:URL withIntermediateDirectories:YES attributes:nil error:error]);
+	RETURN_NO_IF_FALSE([NSFileManager.defaultManager createDirectoryAtURL:URL withIntermediateDirectories:YES attributes:nil error:error]);
 	
 	id sharedHub = [NSClassFromString(@"DebugHierarchyTargetHub") sharedHub];
-	RETURN_IF_NIL(sharedHub);
+	RETURN_NO_IF_NIL(sharedHub);
 	
-	RETURN_IF_FALSE([self _startPhasesWithHub:sharedHub outputURL:URL error:error]);
+	RETURN_NO_IF_FALSE([self _startPhasesWithHub:sharedHub outputURL:URL error:error]);
 	
 	return YES;
 #endif

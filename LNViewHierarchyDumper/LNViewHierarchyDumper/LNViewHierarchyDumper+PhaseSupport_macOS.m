@@ -23,7 +23,7 @@ NSArray<NSString*>* LNExtractPhase0ForPhase1ResponseObjects(NSDictionary* phase1
 - (BOOL)_startPhasesWithHub:(id /*DebugHierarchyTargetHub*/)sharedHub outputURL:(NSURL*)outputURL error:(NSError**)error
 {
 	NSURL* requestResponses = [outputURL URLByAppendingPathComponent:@"RequestResponses" isDirectory:YES];
-	RETURN_IF_FALSE([NSFileManager.defaultManager createDirectoryAtURL:requestResponses withIntermediateDirectories:YES attributes:nil error:error]);
+	RETURN_NO_IF_FALSE([NSFileManager.defaultManager createDirectoryAtURL:requestResponses withIntermediateDirectories:YES attributes:nil error:error]);
 	
 	NSDictionary* phase0Dictionary = @{
 		@"DBGHierarchyRequestName": @"Initial request",
@@ -337,10 +337,10 @@ NSArray<NSString*>* LNExtractPhase0ForPhase1ResponseObjects(NSDictionary* phase1
 	};
 	
 	NSDictionary* phase0Response = [self _executeRequestPhaseWithRequest:phase0Dictionary hub:sharedHub outputURL:requestResponses phaseCount:0 error:error];
-	RETURN_IF_NIL(phase0Response);
+	RETURN_NO_IF_NIL(phase0Response);
 	
 	NSArray* objects = LNExtractPhase0ForPhase1ResponseObjects(phase0Response);
-	RETURN_IF_NIL(objects);
+	RETURN_NO_IF_NIL(objects);
 	
 	NSDictionary* phase1Dictionary = @{
 		@"DBGHierarchyRequestName": @"Fetch encoded layers",
@@ -369,7 +369,7 @@ NSArray<NSString*>* LNExtractPhase0ForPhase1ResponseObjects(NSDictionary* phase1
 		@"DBGHierarchyRequestTransportCompression": @NO
 	};
 	
-	RETURN_IF_NIL([self _executeRequestPhaseWithRequest:phase1Dictionary hub:sharedHub outputURL:requestResponses phaseCount:1 error:error]);
+	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:phase1Dictionary hub:sharedHub outputURL:requestResponses phaseCount:1 error:error]);
 	
 	NSDictionary* phase2Dictionary = @{
 		@"DBGHierarchyRequestName": @"Fetch remaining lazy properties",
@@ -426,7 +426,7 @@ NSArray<NSString*>* LNExtractPhase0ForPhase1ResponseObjects(NSDictionary* phase1
 		@"DBGHierarchyRequestTransportCompression": @NO
 	};
 	
-	RETURN_IF_NIL([self _executeRequestPhaseWithRequest:phase1Dictionary hub:sharedHub outputURL:requestResponses phaseCount:2 error:error]);
+	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:phase2Dictionary hub:sharedHub outputURL:requestResponses phaseCount:2 error:error]);
 	
 	NSDictionary* cleanupPhaseDictionary = @{
 		@"DBGHierarchyRequestName": @"Cleanup",
@@ -442,7 +442,7 @@ NSArray<NSString*>* LNExtractPhase0ForPhase1ResponseObjects(NSDictionary* phase1
 		@"DBGHierarchyRequestTransportCompression": @NO
 	};
 	
-	RETURN_IF_NIL([self _executeRequestPhaseWithRequest:cleanupPhaseDictionary hub:sharedHub outputURL:requestResponses phaseCount:-1 error:error]);
+	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:cleanupPhaseDictionary hub:sharedHub outputURL:requestResponses phaseCount:-1 error:error]);
 	
 	NSDictionary* metadata = @{
 		@"DocumentVersion": @"1",
@@ -451,8 +451,8 @@ NSArray<NSString*>* LNExtractPhase0ForPhase1ResponseObjects(NSDictionary* phase1
 	};
 	
 	NSData* data = [NSPropertyListSerialization dataWithPropertyList:metadata format:NSPropertyListXMLFormat_v1_0 options:0 error:error];
-	RETURN_IF_NIL(data);
-	RETURN_IF_FALSE([data writeToURL:[outputURL URLByAppendingPathComponent:@"metadata"] options:NSDataWritingAtomic error:error]);
+	RETURN_NO_IF_NIL(data);
+	RETURN_NO_IF_FALSE([data writeToURL:[outputURL URLByAppendingPathComponent:@"metadata"] options:NSDataWritingAtomic error:error]);
 	
 	return YES;
 }
