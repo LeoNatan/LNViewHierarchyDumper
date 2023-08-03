@@ -9,6 +9,17 @@
 /* Begin PBXBuildFile section */
 		39CA800824AEA352009883BC /* LNViewHierarchyDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CA800624AEA352009883BC /* LNViewHierarchyDumper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		39CA800924AEA352009883BC /* LNViewHierarchyDumper.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CA800724AEA352009883BC /* LNViewHierarchyDumper.m */; };
+		600E9BC02A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 600E9BB52A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.h */; };
+		600E9BC12A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 600E9BB62A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.h */; };
+		600E9BC22A7A88BF00C90999 /* NSData+GZIP.m in Sources */ = {isa = PBXBuildFile; fileRef = 600E9BB72A7A88BF00C90999 /* NSData+GZIP.m */; };
+		600E9BC32A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 600E9BB82A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.m */; };
+		600E9BC42A7A88BF00C90999 /* LNViewHierarchyDumper-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 600E9BB92A7A88BF00C90999 /* LNViewHierarchyDumper-Private.h */; };
+		600E9BC52A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 600E9BBA2A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.m */; };
+		600E9BC62A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 600E9BBB2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.h */; };
+		600E9BC72A7A88BF00C90999 /* NSData+GZIP.h in Headers */ = {isa = PBXBuildFile; fileRef = 600E9BBC2A7A88BF00C90999 /* NSData+GZIP.h */; };
+		600E9BC82A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 600E9BBD2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.m */; };
+		600E9BC92A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 600E9BBE2A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.m */; };
+		600E9BCA2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 600E9BBF2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,6 +27,17 @@
 		39CA7FF924AEA316009883BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39CA800624AEA352009883BC /* LNViewHierarchyDumper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNViewHierarchyDumper.h; sourceTree = "<group>"; };
 		39CA800724AEA352009883BC /* LNViewHierarchyDumper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNViewHierarchyDumper.m; sourceTree = "<group>"; };
+		600E9BB52A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNViewHierarchyDumper+LibrarySupport.h"; sourceTree = "<group>"; };
+		600E9BB62A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNViewHierarchyDumper+LibraryDebug.h"; sourceTree = "<group>"; };
+		600E9BB72A7A88BF00C90999 /* NSData+GZIP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+GZIP.m"; sourceTree = "<group>"; };
+		600E9BB82A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LNViewHierarchyDumper+PhaseSupport_macOS.m"; sourceTree = "<group>"; };
+		600E9BB92A7A88BF00C90999 /* LNViewHierarchyDumper-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNViewHierarchyDumper-Private.h"; sourceTree = "<group>"; };
+		600E9BBA2A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LNViewHierarchyDumper+LibrarySupport.m"; sourceTree = "<group>"; };
+		600E9BBB2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNViewHierarchyDumper+PhaseSupport_iOS.h"; sourceTree = "<group>"; };
+		600E9BBC2A7A88BF00C90999 /* NSData+GZIP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+GZIP.h"; sourceTree = "<group>"; };
+		600E9BBD2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LNViewHierarchyDumper+PhaseSupport_iOS.m"; sourceTree = "<group>"; };
+		600E9BBE2A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LNViewHierarchyDumper+LibraryDebug.m"; sourceTree = "<group>"; };
+		600E9BBF2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNViewHierarchyDumper+PhaseSupport_macOS.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,8 +71,19 @@
 			isa = PBXGroup;
 			children = (
 				39CA7FF924AEA316009883BC /* Info.plist */,
+				600E9BB92A7A88BF00C90999 /* LNViewHierarchyDumper-Private.h */,
 				39CA800624AEA352009883BC /* LNViewHierarchyDumper.h */,
 				39CA800724AEA352009883BC /* LNViewHierarchyDumper.m */,
+				600E9BB62A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.h */,
+				600E9BBE2A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.m */,
+				600E9BB52A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.h */,
+				600E9BBA2A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.m */,
+				600E9BBB2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.h */,
+				600E9BBD2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.m */,
+				600E9BBF2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.h */,
+				600E9BB82A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.m */,
+				600E9BBC2A7A88BF00C90999 /* NSData+GZIP.h */,
+				600E9BB72A7A88BF00C90999 /* NSData+GZIP.m */,
 			);
 			path = LNViewHierarchyDumper;
 			sourceTree = "<group>";
@@ -62,7 +95,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				600E9BCA2A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.h in Headers */,
+				600E9BC62A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.h in Headers */,
+				600E9BC72A7A88BF00C90999 /* NSData+GZIP.h in Headers */,
+				600E9BC02A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.h in Headers */,
 				39CA800824AEA352009883BC /* LNViewHierarchyDumper.h in Headers */,
+				600E9BC42A7A88BF00C90999 /* LNViewHierarchyDumper-Private.h in Headers */,
+				600E9BC12A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,7 +172,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				600E9BC82A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_iOS.m in Sources */,
+				600E9BC22A7A88BF00C90999 /* NSData+GZIP.m in Sources */,
 				39CA800924AEA352009883BC /* LNViewHierarchyDumper.m in Sources */,
+				600E9BC92A7A88BF00C90999 /* LNViewHierarchyDumper+LibraryDebug.m in Sources */,
+				600E9BC32A7A88BF00C90999 /* LNViewHierarchyDumper+PhaseSupport_macOS.m in Sources */,
+				600E9BC52A7A88BF00C90999 /* LNViewHierarchyDumper+LibrarySupport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
