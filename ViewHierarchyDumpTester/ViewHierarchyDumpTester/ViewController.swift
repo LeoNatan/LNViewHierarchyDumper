@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import UniformTypeIdentifiers
-import LNViewHierarchyDumper
 
 func randomString(length: Int) -> String {
 	let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -77,10 +75,10 @@ class ViewController: UIViewController, UIDocumentPickerDelegate {
 	}
 	
 	@IBAction func dumpHierarchy(_ sender: Any) {
-#if targetEnvironment(macCatalyst) || !targetEnvironment(simulator)
-		pendingTempUrl = URL(fileURLWithPath: "\(NSTemporaryDirectory())/\(ProcessInfo.processInfo.processName)[\(ProcessInfo.processInfo.processIdentifier)].viewhierarchy")
 		do {
-			try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: pendingTempUrl!)
+			let url = try dumpViewHierarchy()
+			
+#if targetEnvironment(macCatalyst) || !targetEnvironment(simulator)
 			let picker = UIDocumentPickerViewController(forExporting: [pendingTempUrl!], asCopy: true)
 			picker.view.layoutIfNeeded()
 			picker.delegate = self
@@ -92,23 +90,11 @@ class ViewController: UIViewController, UIDocumentPickerDelegate {
 			}
 			RunLoop.current.run(until: .init(timeIntervalSinceNow: 0.3))
 #endif
-		} catch let e {
-			let alert = UIAlertController(title: "View Hierarchy Dump Failed", message: e.localizedDescription, preferredStyle: .alert)
-			if #available(iOS 16.0, *) {
-				alert.severity = .critical
-			}
-			alert.addAction(.init(title: "OK", style: .default, handler: nil))
-			present(alert, animated: true, completion: nil)
-		}
 #else
-		let somePath = NSHomeDirectory()
-		let userPath = somePath[somePath.startIndex..<somePath.range(of: "/Library")!.lowerBound]
-		let url = URL(fileURLWithPath: String(userPath)).appendingPathComponent("Desktop").appendingPathComponent("\(ProcessInfo.processInfo.processName)[\(ProcessInfo.processInfo.processIdentifier)].viewhierarchy")
-		do {
-			try LNViewHierarchyDumper.shared.dumpViewHierarchy(to: url)
 			let alert = UIAlertController(title: "View Hierarchy Dumped", message: url.path, preferredStyle: .alert)
 			alert.addAction(.init(title: "OK", style: .default, handler: nil))
 			present(alert, animated: true, completion: nil)
+#endif
 		} catch let e {
 			let alert = UIAlertController(title: "View Hierarchy Dump Failed", message: e.localizedDescription, preferredStyle: .alert)
 			if #available(iOS 16.0, *) {
@@ -117,7 +103,6 @@ class ViewController: UIViewController, UIDocumentPickerDelegate {
 			alert.addAction(.init(title: "OK", style: .default, handler: nil))
 			present(alert, animated: true, completion: nil)
 		}
-#endif
 	}
 	
 	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {

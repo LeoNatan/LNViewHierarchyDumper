@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		39114EE726E2C908004FC75B /* LNViewHierarchyDumper in Frameworks */ = {isa = PBXBuildFile; productRef = 39114EE626E2C908004FC75B /* LNViewHierarchyDumper */; };
 		39114EE826E2C908004FC75B /* LNViewHierarchyDumper in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 39114EE626E2C908004FC75B /* LNViewHierarchyDumper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		39926DAA2A865382001A169E /* NonMacDumpLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39926DA92A865382001A169E /* NonMacDumpLogic.swift */; };
+		39926DAB2A865382001A169E /* NonMacDumpLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39926DA92A865382001A169E /* NonMacDumpLogic.swift */; };
+		39926DAD2A8653E0001A169E /* LNViewHierarchyDumper in Frameworks */ = {isa = PBXBuildFile; productRef = 39926DAC2A8653E0001A169E /* LNViewHierarchyDumper */; };
+		39926DAE2A8653E0001A169E /* LNViewHierarchyDumper in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 39926DAC2A8653E0001A169E /* LNViewHierarchyDumper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		39A46C4B2A79B3850059960A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A46C4A2A79B3850059960A /* AppDelegate.swift */; };
 		39A46C4D2A79B3850059960A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A46C4C2A79B3850059960A /* ViewController.swift */; };
 		39A46C4F2A79B3880059960A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39A46C4E2A79B3880059960A /* Assets.xcassets */; };
@@ -21,9 +25,23 @@
 		39B85D0B24AF9C8400EF17BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39B85D0924AF9C8400EF17BB /* Main.storyboard */; };
 		39B85D0D24AF9C8500EF17BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39B85D0C24AF9C8500EF17BB /* Assets.xcassets */; };
 		39B85D1024AF9C8500EF17BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39B85D0E24AF9C8500EF17BB /* LaunchScreen.storyboard */; };
+		39CD0A0D2A85C0FF00E291D0 /* WatchViewHierarchyDumpTesterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CD0A0C2A85C0FF00E291D0 /* WatchViewHierarchyDumpTesterApp.swift */; };
+		39CD0A0F2A85C0FF00E291D0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CD0A0E2A85C0FF00E291D0 /* ContentView.swift */; };
+		39CD0A112A85C10000E291D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39CD0A102A85C10000E291D0 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		39926DAF2A8653E0001A169E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				39926DAE2A8653E0001A169E /* LNViewHierarchyDumper in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		39A46C5A2A79B6890059960A /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -50,6 +68,7 @@
 
 /* Begin PBXFileReference section */
 		39114EE326E2C8F6004FC75B /* LNViewHierarchyDumper */ = {isa = PBXFileReference; lastKnownFileType = folder; name = LNViewHierarchyDumper; path = ..; sourceTree = "<group>"; };
+		39926DA92A865382001A169E /* NonMacDumpLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonMacDumpLogic.swift; sourceTree = "<group>"; };
 		39A46C482A79B3850059960A /* AppKitViewHierarchyDumpTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppKitViewHierarchyDumpTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39A46C4A2A79B3850059960A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		39A46C4C2A79B3850059960A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -65,6 +84,10 @@
 		39B85D0F24AF9C8500EF17BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39B85D1124AF9C8500EF17BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		39B85D2524AFA74100EF17BB /* ViewHierarchyDumpTester.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ViewHierarchyDumpTester.entitlements; sourceTree = "<group>"; };
+		39CD0A0A2A85C0FF00E291D0 /* WatchViewHierarchyDumpTester.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WatchViewHierarchyDumpTester.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		39CD0A0C2A85C0FF00E291D0 /* WatchViewHierarchyDumpTesterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchViewHierarchyDumpTesterApp.swift; sourceTree = "<group>"; };
+		39CD0A0E2A85C0FF00E291D0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		39CD0A102A85C10000E291D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +104,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				39114EE726E2C908004FC75B /* LNViewHierarchyDumper in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39CD0A072A85C0FF00E291D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39926DAD2A8653E0001A169E /* LNViewHierarchyDumper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +136,7 @@
 				39114EE326E2C8F6004FC75B /* LNViewHierarchyDumper */,
 				39B85D0224AF9C8400EF17BB /* ViewHierarchyDumpTester */,
 				39A46C492A79B3850059960A /* AppKitViewHierarchyDumpTester */,
+				39CD0A0B2A85C0FF00E291D0 /* WatchViewHierarchyDumpTester Watch App */,
 				39B85D0124AF9C8400EF17BB /* Products */,
 				39B85D1D24AF9C9200EF17BB /* Frameworks */,
 			);
@@ -115,6 +147,7 @@
 			children = (
 				39B85D0024AF9C8400EF17BB /* ViewHierarchyDumpTester.app */,
 				39A46C482A79B3850059960A /* AppKitViewHierarchyDumpTester.app */,
+				39CD0A0A2A85C0FF00E291D0 /* WatchViewHierarchyDumpTester.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,6 +163,7 @@
 				39B85D0C24AF9C8500EF17BB /* Assets.xcassets */,
 				39B85D0E24AF9C8500EF17BB /* LaunchScreen.storyboard */,
 				39B85D1124AF9C8500EF17BB /* Info.plist */,
+				39926DA92A865382001A169E /* NonMacDumpLogic.swift */,
 			);
 			path = ViewHierarchyDumpTester;
 			sourceTree = "<group>";
@@ -139,6 +173,16 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		39CD0A0B2A85C0FF00E291D0 /* WatchViewHierarchyDumpTester Watch App */ = {
+			isa = PBXGroup;
+			children = (
+				39CD0A0C2A85C0FF00E291D0 /* WatchViewHierarchyDumpTesterApp.swift */,
+				39CD0A0E2A85C0FF00E291D0 /* ContentView.swift */,
+				39CD0A102A85C10000E291D0 /* Assets.xcassets */,
+			);
+			path = "WatchViewHierarchyDumpTester Watch App";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,13 +231,34 @@
 			productReference = 39B85D0024AF9C8400EF17BB /* ViewHierarchyDumpTester.app */;
 			productType = "com.apple.product-type.application";
 		};
+		39CD0A092A85C0FF00E291D0 /* WatchViewHierarchyDumpTester */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 39CD0A1B2A85C10000E291D0 /* Build configuration list for PBXNativeTarget "WatchViewHierarchyDumpTester" */;
+			buildPhases = (
+				39CD0A062A85C0FF00E291D0 /* Sources */,
+				39CD0A072A85C0FF00E291D0 /* Frameworks */,
+				39CD0A082A85C0FF00E291D0 /* Resources */,
+				39926DAF2A8653E0001A169E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WatchViewHierarchyDumpTester;
+			packageProductDependencies = (
+				39926DAC2A8653E0001A169E /* LNViewHierarchyDumper */,
+			);
+			productName = "WatchViewHierarchyDumpTester Watch App";
+			productReference = 39CD0A0A2A85C0FF00E291D0 /* WatchViewHierarchyDumpTester.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		39B85CF824AF9C8400EF17BB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					39A46C472A79B3850059960A = {
@@ -201,6 +266,9 @@
 					};
 					39B85CFF24AF9C8400EF17BB = {
 						CreatedOnToolsVersion = 12.0;
+					};
+					39CD0A092A85C0FF00E291D0 = {
+						CreatedOnToolsVersion = 14.3;
 					};
 				};
 			};
@@ -219,6 +287,7 @@
 			targets = (
 				39B85CFF24AF9C8400EF17BB /* ViewHierarchyDumpTester */,
 				39A46C472A79B3850059960A /* AppKitViewHierarchyDumpTester */,
+				39CD0A092A85C0FF00E291D0 /* WatchViewHierarchyDumpTester */,
 			);
 		};
 /* End PBXProject section */
@@ -243,6 +312,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		39CD0A082A85C0FF00E291D0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39CD0A112A85C10000E291D0 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -259,9 +336,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39926DAA2A865382001A169E /* NonMacDumpLogic.swift in Sources */,
 				39B85D0824AF9C8400EF17BB /* ViewController.swift in Sources */,
 				39B85D0424AF9C8400EF17BB /* AppDelegate.swift in Sources */,
 				39B85D0624AF9C8400EF17BB /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39CD0A062A85C0FF00E291D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39926DAB2A865382001A169E /* NonMacDumpLogic.swift in Sources */,
+				39CD0A0F2A85C0FF00E291D0 /* ContentView.swift in Sources */,
+				39CD0A0D2A85C0FF00E291D0 /* WatchViewHierarchyDumpTesterApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,6 +578,7 @@
 		39B85D1524AF9C8500EF17BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ViewHierarchyDumpTester/ViewHierarchyDumpTester.entitlements;
@@ -516,6 +605,7 @@
 		39B85D1624AF9C8500EF17BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ViewHierarchyDumpTester/ViewHierarchyDumpTester.entitlements;
@@ -536,6 +626,66 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6,7";
+			};
+			name = Release;
+		};
+		39CD0A192A85C10000E291D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S9QFG2VH2E;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WatchViewHierarchyDumpTester;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.LeoNatan.ViewHierarchyDumpTester;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.ViewHierarchyDumpTester.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 9.4;
+			};
+			name = Debug;
+		};
+		39CD0A1A2A85C10000E291D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S9QFG2VH2E;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WatchViewHierarchyDumpTester;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.LeoNatan.ViewHierarchyDumpTester;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.LeoNatan.ViewHierarchyDumpTester.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 9.4;
 			};
 			name = Release;
 		};
@@ -569,6 +719,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		39CD0A1B2A85C10000E291D0 /* Build configuration list for PBXNativeTarget "WatchViewHierarchyDumpTester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39CD0A192A85C10000E291D0 /* Debug */,
+				39CD0A1A2A85C10000E291D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -577,6 +736,10 @@
 			productName = LNViewHierarchyDumper;
 		};
 		39114EE626E2C908004FC75B /* LNViewHierarchyDumper */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LNViewHierarchyDumper;
+		};
+		39926DAC2A8653E0001A169E /* LNViewHierarchyDumper */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LNViewHierarchyDumper;
 		};
