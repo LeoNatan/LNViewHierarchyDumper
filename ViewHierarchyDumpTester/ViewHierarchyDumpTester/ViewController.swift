@@ -79,7 +79,7 @@ class ViewController: UIViewController, UIDocumentPickerDelegate {
 			let url = try dumpViewHierarchy()
 			
 #if targetEnvironment(macCatalyst) || !targetEnvironment(simulator)
-			let picker = UIDocumentPickerViewController(forExporting: [pendingTempUrl!], asCopy: true)
+			let picker = UIDocumentPickerViewController(forExporting: [url], asCopy: true)
 			picker.view.layoutIfNeeded()
 			picker.delegate = self
 #if targetEnvironment(macCatalyst)
