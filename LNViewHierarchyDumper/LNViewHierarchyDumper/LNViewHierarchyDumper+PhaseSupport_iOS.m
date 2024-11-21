@@ -10,28 +10,85 @@
 
 #if TARGET_OS_IPHONE || TARGET_OS_MACCATALYST
 
+#define REMOVE_COMPRESSION 0
+
 NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase1ResponseObjects(NSDictionary* phase1Response)
 {
-	NSArray<NSDictionary*>* topLevelGroupsCALayers	= phase1Response[@"topLevelGroups"][@"com.apple.QuartzCore.CALayer"][@"debugHierarchyObjects"];
+	NSArray<NSDictionary*>* topLevelGroupsCALayers = phase1Response[@"topLevelGroups"][@"com.apple.QuartzCore.CALayer"][@"debugHierarchyObjects"];
 	
 	return [topLevelGroupsCALayers valueForKey:@"objectID"];
 }
 
-/*
-NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase2ResponseObjects(NSDictionary* phase1Response)
+void LNTraverseViews(NSArray* views, BOOL(^test)(NSDictionary* view), NSMutableArray* output)
 {
-	NSArray<NSDictionary*>* topLevelGroupsCALayers	= phase1Response[@"topLevelGroups"][@"com.apple.QuartzCore.CALayer"][@"debugHierarchyObjects"];
+	if(views.count == 0)
+	{
+		return;
+	}
 	
-	return [topLevelGroupsCALayers valueForKey:@"objectID"];
+	for(NSDictionary* view in views)
+	{
+		if(test(view) == YES)
+		{
+			[output addObject:view[@"objectID"]];
+		}
+		
+		LNTraverseViews(view[@"childGroup"][@"debugHierarchyObjects"], test, output);
+	}
 }
 
-NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary* phase1Response)
+void LNFindViews(NSDictionary* phase0Response, BOOL(^test)(NSDictionary* view), NSMutableArray* output)
 {
-	NSArray<NSDictionary*>* topLevelGroupsCALayers	= phase1Response[@"topLevelGroups"][@"com.apple.QuartzCore.CALayer"][@"debugHierarchyObjects"];
+	void (^traverser)(NSArray* views) = ^(NSArray* views) {
+		LNTraverseViews(views, test, output);
+	};
 	
-	return [topLevelGroupsCALayers valueForKey:@"objectID"];
+	NSArray<NSDictionary*>* windows = phase0Response[@"topLevelGroups"][@"com.apple.UIKit.UIWindow"][@"debugHierarchyObjects"];
+	for(NSDictionary* window in windows)
+	{
+		NSArray<NSDictionary*>* views = window[@"childGroup"][@"debugHierarchyObjects"];
+		traverser(views);
+	}
+	
+	NSArray<NSDictionary*>* views = phase0Response[@"topLevelGroups"][@"com.apple.UIKit.UIView"][@"debugHierarchyObjects"];
+	traverser(views);
 }
- */
+
+NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase2ResponseObjects(NSDictionary* phase0Response)
+{
+	NSMutableArray* rv = [NSMutableArray new];
+
+	LNFindViews(phase0Response, ^BOOL(NSDictionary *view) {
+		return [view[@"className"] isEqualToString:@"_UIVisualEffectBackdropView"];
+	}, rv);
+	
+	return rv;
+}
+
+BOOL LNViewPropertyExistsWithKey(NSDictionary* view, NSString* key)
+{
+	NSArray* properties = view[@"properties"];
+	for(NSDictionary* property in properties)
+	{
+		if([property[@"propertyName"] isEqualToString:key])
+		{
+			return YES;
+		}
+	}
+	
+	return NO;
+}
+
+NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary* phase0Response)
+{
+	NSMutableArray* rv = [NSMutableArray new];
+	
+	LNFindViews(phase0Response, ^BOOL(NSDictionary *view) {
+		return LNViewPropertyExistsWithKey(view, @"dbg_holdsSymbolImage");
+	}, rv);
+	
+	return rv;
+}
 
 @implementation LNViewHierarchyDumper (PhaseSupport_iOS)
 
@@ -40,9 +97,10 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 	NSURL* requestResponses = [outputURL URLByAppendingPathComponent:@"RequestResponses" isDirectory:YES];
 	RETURN_NO_IF_FALSE([NSFileManager.defaultManager createDirectoryAtURL:requestResponses withIntermediateDirectories:YES attributes:nil error:error]);
 	
+	//https://erkanyildiz.me/lab/jsonhardcode/
 	NSDictionary* phase0Dictionary = @{
 		@"DBGHierarchyRequestName": @"Initial request",
-		@"DBGHierarchyRequestInitiatorVersionKey": @3,
+		@"DBGHierarchyRequestInitiatorVersionKey": @4,
 		@"DBGHierarchyRequestPriority": @0,
 		@"DBGHierarchyObjectDiscovery": @1,
 		@"DBGHierarchyRequestActions": @[
@@ -55,15 +113,15 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 				@"propertyNames": @[
 					@"dbgFormattedDisplayName"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": NSNull.null,
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -87,17 +145,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"dbg_ListID",
 					@"optimizationOpportunities"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"CALayer"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -113,17 +171,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"secondAttribute",
 					@"secondItem"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"NSLayoutConstraint"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -140,17 +198,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"zPosition",
 					@"zRotation"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"SKNode"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -159,65 +217,65 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"scaleMode",
 					@"size"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"SKScene"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
 				@"options": @1,
 				@"propertyNames": NSNull.null,
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @3,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"SKView"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyActionLegacyV1",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
 				@"options": @1,
 				@"propertyNames": NSNull.null,
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @3,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"SKScene"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyActionLegacyV1",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
 				@"options": @1,
 				@"propertyNames": NSNull.null,
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @3,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"SKNode"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyActionLegacyV1",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -231,17 +289,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"dbgScreenShape",
 					@"dbgScreenShapeIsRectangular"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIScreen"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -250,17 +308,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"keyWindow",
 					@"statusBarOrientation"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIApplication"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -269,17 +327,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"title",
 					@"activationState"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIScene"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -289,17 +347,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"internal",
 					@"visible"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIWindow"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -307,17 +365,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 				@"propertyNames": @[
 					@"title"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIViewController"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -336,19 +394,20 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"lastBaselineOffsetFromBottom",
 					@"layoutMargins",
 					@"verticalAffectingConstraints",
+					@"dbgRenderingModeIsMultiLayer",
 					@"dbgSubviewHierarchy"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIView"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -357,17 +416,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"layoutFrame",
 					@"identifier"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UILayoutGuide"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -375,17 +434,17 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 				@"propertyNames": @[
 					@"dbg_holdsSymbolImage"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIImageView"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -393,21 +452,26 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 				@"propertyNames": @[
 					@"axis"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": @[
 					@"UIStackView"
 				],
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			}
 		],
 		@"DBGHierarchyRequestIdentifier": NSUUID.UUID.UUIDString,
-		@"DBGHierarchyRequestTransportCompression": @YES
+		@"DBGHierarchyRequestTransportCompression":
+#if REMOVE_COMPRESSION
+		@NO
+#else
+		@YES
+#endif
 	};
 	
 	NSDictionary* phase0Response = [self _executeRequestPhaseWithRequest:phase0Dictionary hub:sharedHub outputURL:requestResponses phaseCount:0 error:error];
@@ -418,7 +482,7 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 	
 	NSDictionary* phase1Dictionary = @{
 		@"DBGHierarchyRequestName": @"Fetch encoded layers",
-		@"DBGHierarchyRequestInitiatorVersionKey": @3,
+		@"DBGHierarchyRequestInitiatorVersionKey": @4,
 		@"DBGHierarchyRequestPriority": @0,
 		@"DBGHierarchyObjectDiscovery": @2,
 		@"DBGHierarchyRequestActions": @[
@@ -428,26 +492,108 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 				@"propertyNames": @[
 					@"encodedPresentationLayer"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": NSNull.null,
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @0
+				@"propertyNamesAreExclusive": @NO
 			}
 		],
 		@"DBGHierarchyRequestIdentifier": NSUUID.UUID.UUIDString,
-		@"DBGHierarchyRequestTransportCompression": @YES
+		@"DBGHierarchyRequestTransportCompression":
+#if REMOVE_COMPRESSION
+		@NO
+#else
+		@YES
+#endif
 	};
 	
 	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:phase1Dictionary hub:sharedHub outputURL:requestResponses phaseCount:1 error:error]);
 	
+	objects = LNExtractPhoneOSPhase0ForPhase2ResponseObjects(phase0Response);
+	RETURN_NO_IF_NIL(objects);
+	
 	NSDictionary* phase2Dictionary = @{
+		@"DBGHierarchyRequestName": @"Fetch rendered effect view snapshots",
+		@"DBGHierarchyRequestInitiatorVersionKey": @4,
+		@"DBGHierarchyRequestPriority": @0,
+		@"DBGHierarchyObjectDiscovery": @2,
+		@"DBGHierarchyRequestActions": @[
+			@{
+				@"objectIdentifiers": objects,
+				@"options": @0,
+				@"propertyNames": @[
+					@"snapshotImageRenderedUsingDrawHierarchyInRect"
+				],
+				@"exactTypesAreExclusive": @NO,
+				@"optionsComparisonStyle": @0,
+				@"exactTypes": NSNull.null,
+				@"typesAreExclusive": @NO,
+				@"visibility": @15,
+				@"types": NSNull.null,
+				@"objectIdentifiersAreExclusive": @NO,
+				@"actionClass": @"DebugHierarchyPropertyAction",
+				@"propertyNamesAreExclusive": @NO
+			},
+			@{
+				@"actionClass": @"DebugHierarchyRunLoopAction"
+			}
+		],
+		@"DBGHierarchyRequestIdentifier": NSUUID.UUID.UUIDString,
+		@"DBGHierarchyRequestTransportCompression":
+#if REMOVE_COMPRESSION
+		@NO
+#else
+		@YES
+#endif
+	};
+	
+	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:phase2Dictionary hub:sharedHub outputURL:requestResponses phaseCount:2 error:error]);
+	
+	objects = LNExtractPhoneOSPhase0ForPhase3ResponseObjects(phase0Response);
+	RETURN_NO_IF_NIL(objects);
+	
+	NSDictionary* phase3Dictionary = @{
+		@"DBGHierarchyRequestName": @"Fetch rendered view snapshots",
+		@"DBGHierarchyRequestInitiatorVersionKey": @4,
+		@"DBGHierarchyRequestPriority": @0,
+		@"DBGHierarchyObjectDiscovery": @2,
+		@"DBGHierarchyRequestActions": @[
+			@{
+				@"objectIdentifiers": objects,
+				@"options": @0,
+				@"propertyNames": @[
+					@"snapshotImage"
+				],
+				@"exactTypesAreExclusive": @NO,
+				@"optionsComparisonStyle": @0,
+				@"exactTypes": NSNull.null,
+				@"typesAreExclusive": @NO,
+				@"visibility": @15,
+				@"types": NSNull.null,
+				@"objectIdentifiersAreExclusive": @NO,
+				@"actionClass": @"DebugHierarchyPropertyAction",
+				@"propertyNamesAreExclusive": @NO
+			}
+		],
+		@"DBGHierarchyRequestIdentifier": NSUUID.UUID.UUIDString,
+		@"DBGHierarchyRequestTransportCompression":
+#if REMOVE_COMPRESSION
+		@NO
+#else
+		@YES
+#endif
+	};
+	
+	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:phase3Dictionary hub:sharedHub outputURL:requestResponses phaseCount:3 error:error]);
+	
+	NSDictionary* phase4Dictionary = @{
 		@"DBGHierarchyRequestName": @"Fetch remaining lazy properties",
-		@"DBGHierarchyRequestInitiatorVersionKey": @3,
+		@"DBGHierarchyRequestInitiatorVersionKey": @4,
 		@"DBGHierarchyRequestPriority": @0,
 		@"DBGHierarchyObjectDiscovery": @2,
 		@"DBGHierarchyRequestActions": @[
@@ -463,15 +609,15 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"visualRepresentation",
 					@"dbgSubviewHierarchy"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": NSNull.null,
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyAction",
-				@"propertyNamesAreExclusive": @1
+				@"propertyNamesAreExclusive": @YES
 			},
 			@{
 				@"objectIdentifiers": NSNull.null,
@@ -485,26 +631,31 @@ NSArray<NSString*>* LNExtractPhoneOSPhase0ForPhase3ResponseObjects(NSDictionary*
 					@"visualRepresentation",
 					@"dbgSubviewHierarchy"
 				],
-				@"exactTypesAreExclusive": @0,
+				@"exactTypesAreExclusive": @NO,
 				@"optionsComparisonStyle": @0,
 				@"exactTypes": NSNull.null,
-				@"typesAreExclusive": @0,
+				@"typesAreExclusive": @NO,
 				@"visibility": @15,
 				@"types": NSNull.null,
-				@"objectIdentifiersAreExclusive": @0,
+				@"objectIdentifiersAreExclusive": @NO,
 				@"actionClass": @"DebugHierarchyPropertyActionLegacyV1",
-				@"propertyNamesAreExclusive": @1
+				@"propertyNamesAreExclusive": @YES
 			}
 		],
 		@"DBGHierarchyRequestIdentifier": NSUUID.UUID.UUIDString,
-		@"DBGHierarchyRequestTransportCompression": @YES
+		@"DBGHierarchyRequestTransportCompression":
+#if REMOVE_COMPRESSION
+		@NO
+#else
+		@YES
+#endif
 	};
 	
-	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:phase2Dictionary hub:sharedHub outputURL:requestResponses phaseCount:2 error:error]);
+	RETURN_NO_IF_NIL([self _executeRequestPhaseWithRequest:phase4Dictionary hub:sharedHub outputURL:requestResponses phaseCount:4 error:error]);
 	
 	NSDictionary* cleanupPhaseDictionary = @{
 		@"DBGHierarchyRequestName": @"Cleanup",
-		@"DBGHierarchyRequestInitiatorVersionKey": @3,
+		@"DBGHierarchyRequestInitiatorVersionKey": @4,
 		@"DBGHierarchyRequestPriority": @0,
 		@"DBGHierarchyObjectDiscovery": @0,
 		@"DBGHierarchyRequestActions": @[

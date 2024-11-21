@@ -1,6 +1,6 @@
 # LNViewHierarchyDumper
 
-A framework for programmatically dumping the view hierarchy of your app into an Xcode 12 and above compatible view hierarchy file archive.
+A framework for programmatically dumping the view hierarchy of your app into an Xcode 16 and above compatible view hierarchy file archive.
 
 [![GitHub release](https://img.shields.io/github/release/LeoNatan/LNViewHierarchyDumper.svg)](https://github.com/LeoNatan/LNViewHierarchyDumper/releases) [![GitHub stars](https://img.shields.io/github/stars/LeoNatan/LNViewHierarchyDumper.svg)](https://github.com/LeoNatan/LNViewHierarchyDumper/stargazers) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/LeoNatan/LNViewHierarchyDumper/master/LICENSE) <span class="badge-paypal"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BR68NJEJXGWL6" title="Donate to this project using PayPal"><img src="https://img.shields.io/badge/paypal-donate-yellow.svg?style=flat" alt="PayPal Donation Button" /></a></span>
 
